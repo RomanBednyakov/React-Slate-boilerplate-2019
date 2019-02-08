@@ -159,22 +159,17 @@ class SlateEditor extends React.Component {
 
       if (typeof token !== "string") {
         let keyStart = 10;
-        let keyEnd = 10;
-        if (startText) {
+        if (startText && startText.key !== undefined) {
           keyStart = startText.key;
         }
-        if (endText) {
-          keyEnd = endText.key;
-        }
-
         const dec = {
           anchor: {
             key: keyStart,
-            offset: startOffset
+            offset: startOffset,
           },
           focus: {
-            key: keyEnd,
-            offset: endOffset
+            key: keyStart,
+            offset: endOffset,
           },
           mark: {
             type: token.type
@@ -183,13 +178,11 @@ class SlateEditor extends React.Component {
 
         decorations.push(dec);
       }
-
       start = end;
     }
 
     return [...others, ...decorations];
   }
-
   renderMarkButton(type, className) {
     const isActive = this.hasMark(type);
 
