@@ -1,0 +1,24 @@
+.app-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  background: azure;
+  font-size: 17px;
+  .app-wrapper-editor {
+    width: 50%;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .app-wrapper-editor-btn {
+      width: 30%;
+      margin-top: 50px;
+    }
+    .app-wrapper-editor-active {
+      background: lightcyan;
+      padding: 30px 20px;
+    }
+  }
+}
