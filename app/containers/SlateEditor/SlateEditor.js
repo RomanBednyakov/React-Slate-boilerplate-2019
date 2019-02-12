@@ -292,7 +292,7 @@ class SlateEditor extends React.Component {
 
   onChange({ value }) {
     this.setState({ value });
-    this.props.onChange(this.myRef.current.children[0].innerHTML);
+    this.props.onChange(slateHtmlSerialize.serialize(value));
   }
 
   onClickLink(event) {
