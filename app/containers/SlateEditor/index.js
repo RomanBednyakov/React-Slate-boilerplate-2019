@@ -24,6 +24,9 @@ class Index extends React.Component {
     };
     this.lastClickCountEditor = 0;
   }
+  componentDidMount() {
+    this.onSubmitEditor(0);
+  }
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState.value !== this.state.value) {
       return true;
