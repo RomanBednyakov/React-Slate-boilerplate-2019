@@ -1,84 +1,128 @@
-import React from 'react';
-import Html from 'slate-html-serializer';
+import React from "react";
+import Html from "slate-html-serializer";
 import styled from "react-emotion";
 
 const BLOCK_TAGS = {
-  p: 'paragraph',
-  li: 'list-item',
-  ul: 'bulleted-list',
-  ol: 'numbered-list',
-  blockquote: 'quote',
-  pre: 'code',
-  h1: 'heading-one',
-  h2: 'heading-two',
-  h3: 'heading-three',
-  h4: 'heading-four',
-  h5: 'heading-five',
-  h6: 'heading-six',
-  img: 'image',
-  a: 'link',
+  p: "paragraph",
+  li: "list-item",
+  ul: "bulleted-list",
+  ol: "numbered-list",
+  blockquote: "quote",
+  pre: "code",
+  h1: "heading-one",
+  h2: "heading-two",
+  h3: "heading-three",
+  h4: "heading-four",
+  h5: "heading-five",
+  h6: "heading-six",
+  center: "center",
+  img: "image",
+  a: "link"
 };
 
 const MARK_TAGS = {
-  strong: 'bold',
-  em: 'italic',
-  u: 'underlined',
-  s: 'strikethrough',
-  code: 'code',
+  strong: "bold",
+  em: "italic",
+  u: "underlined",
+  s: "strikethrough",
+  code: "code"
 };
-const Image = styled('img')`
+const Image = styled("img")`
   display: block;
   max-width: 100%;
   max-height: 20em;
-  box-shadow: ${props => (props.selected ? '0 0 0 2px blue;' : 'none')};
+  box-shadow: ${props => (props.selected ? "0 0 0 2px blue;" : "none")};
 `;
 
 const RULES = [
   {
     deserialize(el, next) {
       const block = BLOCK_TAGS[el.tagName.toLowerCase()];
+      if (el.tagName.toLowerCase() === "pre") {
+        const code = el.childNodes[0];
+        const childNodes =
+          code && code.tagName.toLowerCase() === "code"
+            ? code.childNodes
+            : el.childNodes;
 
+        return {
+          object: "block",
+          type: "code",
+          nodes: next(childNodes)
+        };
+      }
+      if (el.tagName.toLowerCase() === "img") {
+        return {
+          object: "block",
+          type: "image",
+          nodes: next(el.childNodes),
+          data: {
+            src: el.getAttribute("src")
+          }
+        };
+      }
+      if (el.tagName.toLowerCase() === "blockquote") {
+        return {
+          object: "block",
+          type: "blockquote",
+          nodes: next(el.childNodes)
+        };
+      }
+      if (el.tagName.toLowerCase() === "a") {
+        return {
+          object: "inline",
+          type: "link",
+          nodes: next(el.childNodes),
+          data: {
+            href: el.getAttribute("href")
+          }
+        };
+      }
       if (block) {
         return {
-          object: 'block',
+          object: "block",
           type: block,
-          nodes: next(el.childNodes),
+          nodes: next(el.childNodes)
         };
       }
     },
     serialize(obj, children) {
-      if (obj.object === 'block') {
+      if (obj.object === "block") {
         switch (obj.type) {
-          case 'code':
+          case "code":
             return (
               <pre>
                 <code>{children}</code>
               </pre>
             );
-          case 'paragraph':
-            return <p className={obj.data.get('className')}>{children}</p>;
-          case 'heading-one':
+          case "paragraph":
+            return <p className={obj.data.get("className")}>{children}</p>;
+          case "heading-one":
             return <h1>{children}</h1>;
-          case 'heading-two':
+          case "heading-two":
             return <h2>{children}</h2>;
-          case 'list-item':
+          case "list-item":
             return <li>{children}</li>;
-          case 'bulleted-list':
+          case "bulleted-list":
             return <ul>{children}</ul>;
-          case 'numbered-list':
+          case "numbered-list":
             return <ol>{children}</ol>;
-          case 'block-quote':
+          case "center":
+            return <center>{children}</center>;
+          case "block-quote":
             return <blockquote>{children}</blockquote>;
-          case 'image':
-            return <Image src={obj.data.get('src')} />;
-          case 'quote':
+          case "image":
+            return <Image src={obj.data.get("src")} />;
+          case "quote":
             return <blockquote>{children}</blockquote>;
+          case "link":
+            return <a href={obj.data.get("href")}>{children}</a>;
         }
       }
-      if (obj.object === 'inline') {
+      if (obj.object === "inline") {
         switch (obj.type) {
-          case 'link':
-            return <a href={obj.data.get('href')}>{children}</a>;
+          case "link":
+            return <a href={obj.data.get("href")}>{children}</a>;
         }
       }
     }
@@ -89,88 +133,29 @@ const RULES = [
 
       if (mark) {
         return {
-          object: 'mark',
+          object: "mark",
           type: mark,
-          nodes: next(el.childNodes),
+          nodes: next(el.childNodes)
         };
       }
     },
     serialize(obj, children) {
-      if (obj.object === 'mark') {
+      if (obj.object === "mark") {
         switch (obj.type) {
-          case 'bold':
+          case "bold":
             return <strong>{children}</strong>;
-          case 'italic':
+          case "italic":
             return <em>{children}</em>;
-          case 'strikethrough':
+          case "strikethrough":
             return <strike>{children}</strike>;
-          case 'code':
+          case "code":
             return <code>{children}</code>;
-          case 'underlined':
+          case "underlined":
             return <u>{children}</u>;
         }
       }
-    },
-  },
-  {
-    // Special case for code blocks, which need to grab the nested childNodes.
-    deserialize(el, next) {
-      if (el.tagName.toLowerCase() === 'pre') {
-        const code = el.childNodes[0];
-        const childNodes =
-          code && code.tagName.toLowerCase() === 'code'
-            ? code.childNodes
-            : el.childNodes;
-
-        return {
-          object: 'block',
-          type: 'code',
-          nodes: next(childNodes),
-        };
-      }
-    },
-  },
-  {
-    // Special case for images, to grab their src.
-    deserialize(el, next) {
-      if (el.tagName.toLowerCase() === 'img') {
-        return {
-          object: 'block',
-          type: 'image',
-          nodes: next(el.childNodes),
-          data: {
-            src: el.getAttribute('src'),
-          },
-        };
-      }
-    },
-  },
-  {
-    deserialize(el, next) {
-      if (el.tagName.toLowerCase() === 'blockquote') {
-        return {
-          object: 'block',
-          type: 'blockquote',
-          nodes: next(el.childNodes),
-        };
-      }
-    },
-  },
-  {
-    // Special case for links, to grab their href.
-    deserialize(el, next) {
-      if (el.tagName.toLowerCase() === 'a') {
-        return {
-          object: 'inline',
-          type: 'link',
-          nodes: next(el.childNodes),
-          data: {
-            href: el.getAttribute('href'),
-          },
-        };
-      }
-    },
-  },
+    }
+  }
 ];
 
 const serializer = new Html({ rules: RULES });
