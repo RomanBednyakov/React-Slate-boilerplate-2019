@@ -65,7 +65,6 @@ class App extends React.Component {
           >
             edit!
           </button>
-          <span onClick={this.bla}>adsssssssssasdsda</span>
         </div>
       </div>
     );
