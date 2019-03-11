@@ -37,25 +37,6 @@ class Index extends React.Component {
     return false;
   }
 
-  hasMark = type => {
-    const { value } = this.state;
-    return value.activeMarks.some(mark => mark.type === type);
-  };
-
-  hasBlock = type => {
-    const { value } = this.state;
-    return value.blocks.some(node => node.type === type);
-  };
-
-  hasLinks = () => {
-    const { value } = this.state;
-    return value.inlines.some(inline => inline.type === "link");
-  };
-
-  ref = editor => {
-    this.editor = editor;
-  };
-
   decorateNode = (node, editor, next) => {
     const others = next() || [];
     if (node.object !== "block") return others;
@@ -127,6 +108,25 @@ class Index extends React.Component {
     }
 
     return [...others, ...decorations];
+  };
+
+  hasMark = type => {
+    const { value } = this.state;
+    return value.activeMarks.some(mark => mark.type === type);
+  };
+
+  hasBlock = type => {
+    const { value } = this.state;
+    return value.blocks.some(node => node.type === type);
+  };
+
+  hasLinks = () => {
+    const { value } = this.state;
+    return value.inlines.some(inline => inline.type === "link");
+  };
+
+  ref = editor => {
+    this.editor = editor;
   };
 
   renderMarkButton = (type, className) => {
