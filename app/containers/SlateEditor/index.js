@@ -236,10 +236,6 @@ class Index extends React.Component {
     }
   };
 
-  onChange = ({ value }) => {
-    this.setState({ value });
-  };
-
   onClickLink = event => {
     event.preventDefault();
 
@@ -278,6 +274,10 @@ class Index extends React.Component {
       }
       asyncFunc(this);
     }
+  };
+
+  onChange = ({ value }) => {
+    this.setState({ value });
   };
 
   onDropOrPaste = (event, editor, next) => {
